@@ -1,9 +1,10 @@
 
-import React, { useState, useMemo } from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
+import React, { useState, useMemo, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, SafeAreaView, TouchableOpacity, RefreshControl } from 'react-native';
 import { router } from 'expo-router';
 import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { mockLocations } from '../data/mockData';
+import { useAuth } from '../contexts/AuthContext';
 import LocationCard from '../components/LocationCard';
 import SearchBar from '../components/SearchBar';
 import CategoryFilter from '../components/CategoryFilter';
@@ -13,6 +14,19 @@ import Icon from '../components/Icon';
 export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState(new Date());
+  const { user } = useAuth();
+
+  // Simulate real-time updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log('Simulating real-time vibe update...');
+      setLastUpdate(new Date());
+    }, 30000); // Update every 30 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   const filteredLocations = useMemo(() => {
     let filtered = mockLocations;
@@ -37,11 +51,32 @@ export default function HomeScreen() {
       if (Math.abs(ratingDiff) > 0.1) return ratingDiff;
       return (a.distance || 0) - (b.distance || 0);
     });
-  }, [searchQuery, selectedCategory]);
+  }, [searchQuery, selectedCategory, lastUpdate]);
+
+  const handleRefresh = async () => {
+    console.log('Refreshing vibe data...');
+    setRefreshing(true);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    setLastUpdate(new Date());
+    setRefreshing(false);
+  };
 
   const handleAddLocation = () => {
     console.log('Add new location pressed');
     router.push('/add-location');
+  };
+
+  const handleProfile = () => {
+    console.log('Navigate to profile');
+    router.push('/profile');
+  };
+
+  const handleSearch = () => {
+    console.log('Navigate to search');
+    router.push('/search');
   };
 
   return (
@@ -51,23 +86,22 @@ export default function HomeScreen() {
           <View style={styles.titleContainer}>
             <Text style={commonStyles.title}>Vibe Check</Text>
             <Text style={commonStyles.textSecondary}>
-              Discover and rate the vibe of places around you
+              Hey {user?.name?.split(' ')[0] || 'there'}! Discover places around you
             </Text>
           </View>
-          <Button
-            text="Add Place"
-            onPress={handleAddLocation}
-            style={styles.addButton}
-            textStyle={styles.addButtonText}
-          />
+          <TouchableOpacity onPress={handleProfile} style={styles.profileButton}>
+            <Icon name="person-circle" size={32} color={colors.primary} />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.searchContainer}>
-          <SearchBar
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Search for places..."
-          />
+          <TouchableOpacity onPress={handleSearch} style={styles.searchTouchable}>
+            <SearchBar
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder="Search for places..."
+            />
+          </TouchableOpacity>
         </View>
 
         <CategoryFilter
@@ -75,14 +109,37 @@ export default function HomeScreen() {
           onCategoryChange={setSelectedCategory}
         />
 
+        <View style={styles.actionsBar}>
+          <Button
+            text="Add Place"
+            onPress={handleAddLocation}
+            style={styles.addButton}
+            textStyle={styles.addButtonText}
+          />
+          <View style={styles.liveIndicator}>
+            <View style={styles.liveDot} />
+            <Text style={styles.liveText}>Live Updates</Text>
+          </View>
+        </View>
+
         <ScrollView 
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={colors.primary}
+            />
+          }
         >
           <View style={styles.resultsHeader}>
             <Text style={styles.resultsText}>
               {filteredLocations.length} place{filteredLocations.length !== 1 ? 's' : ''} found
+            </Text>
+            <Text style={styles.updateText}>
+              Updated {Math.floor((Date.now() - lastUpdate.getTime()) / 1000)}s ago
             </Text>
           </View>
 
@@ -122,19 +179,52 @@ const styles = StyleSheet.create({
   titleContainer: {
     flex: 1,
   },
+  profileButton: {
+    padding: 4,
+    marginLeft: 16,
+  },
+  searchContainer: {
+    paddingHorizontal: 16,
+  },
+  searchTouchable: {
+    width: '100%',
+  },
+  actionsBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    marginBottom: 16,
+  },
   addButton: {
     backgroundColor: colors.accent,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    marginLeft: 16,
   },
   addButtonText: {
     fontSize: 14,
     fontWeight: '600',
   },
-  searchContainer: {
-    paddingHorizontal: 16,
+  liveIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.backgroundAlt,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  liveDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.success,
+    marginRight: 6,
+  },
+  liveText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: colors.text,
   },
   scrollView: {
     flex: 1,
@@ -144,12 +234,19 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   resultsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 16,
   },
   resultsText: {
     fontSize: 16,
     fontWeight: '600',
     color: colors.text,
+  },
+  updateText: {
+    fontSize: 12,
+    color: colors.textSecondary,
   },
   emptyState: {
     alignItems: 'center',

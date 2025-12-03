@@ -1,5 +1,5 @@
 {
-  "name": "Natively",
+  "name": "campus-vibe-app-unoerv",
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
@@ -19,6 +19,7 @@
     "@expo/prebuild-config": "^9.0.6",
     "@expo/vector-icons": "^14.1.0",
     "@gorhom/bottom-sheet": "^5.2.3",
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/datetimepicker": "^8.3.0",
     "@react-navigation/drawer": "^7.1.1",
     "@react-navigation/native": "^7.0.14",

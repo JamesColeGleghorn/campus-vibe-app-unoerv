@@ -2,11 +2,11 @@
 {
   "expo": {
     "name": "VibeRater",
-    "slug": "VibeRater",
-    "version": "1.0.0",
+    "slug": "viberater",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/natively-dark.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/natively-dark.png",
@@ -15,9 +15,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.VibeRater.name",
+      "bundleIdentifier": "com.viberater.app",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSPhotoLibraryUsageDescription": "VibeRater needs access to your photo library to upload images of places.",
+        "NSCameraUsageDescription": "VibeRater needs access to your camera to take photos of places."
       }
     },
     "android": {
@@ -26,7 +28,13 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.VibeRater.name"
+      "package": "com.viberater.app",
+      "versionCode": 2,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "web": {
       "favicon": "./assets/images/final_quest_240x240.png",
@@ -34,7 +42,14 @@
     },
     "plugins": [
       "expo-font",
-      "expo-router"
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "VibeRater needs access to your photos to upload images of places.",
+          "cameraPermission": "VibeRater needs access to your camera to take photos of places."
+        }
+      ]
     ],
     "scheme": "viberater",
     "experiments": {

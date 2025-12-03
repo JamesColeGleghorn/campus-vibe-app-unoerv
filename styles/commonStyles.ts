@@ -1,20 +1,41 @@
 
-import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { StyleSheet, useColorScheme } from 'react-native';
+
+export const useThemeColors = () => {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
+  return {
+    primary: '#4A90E2',
+    secondary: '#357ABD',
+    accent: '#50C878',
+    background: isDark ? '#1A1A1A' : '#FFFFFF',
+    backgroundAlt: isDark ? '#2A2A2A' : '#F8F9FA',
+    text: isDark ? '#FFFFFF' : '#2C3E50',
+    textSecondary: isDark ? '#B0B0B0' : '#7F8C8D',
+    grey: isDark ? '#666666' : '#BDC3C7',
+    card: isDark ? '#2A2A2A' : '#FFFFFF',
+    border: isDark ? '#3A3A3A' : '#E1E8ED',
+    warning: '#F39C12',
+    danger: '#E74C3C',
+    success: '#27AE60',
+  };
+};
 
 export const colors = {
-  primary: '#4A90E2',      // Vibrant blue
-  secondary: '#357ABD',    // Darker blue
-  accent: '#50C878',       // Emerald green for ratings
-  background: '#FFFFFF',   // White background
-  backgroundAlt: '#F8F9FA', // Light gray background
-  text: '#2C3E50',         // Dark gray text
-  textSecondary: '#7F8C8D', // Medium gray text
-  grey: '#BDC3C7',         // Light gray
-  card: '#FFFFFF',         // White cards
-  border: '#E1E8ED',       // Light border
-  warning: '#F39C12',      // Orange
-  danger: '#E74C3C',       // Red
-  success: '#27AE60',      // Green
+  primary: '#4A90E2',
+  secondary: '#357ABD',
+  accent: '#50C878',
+  background: '#FFFFFF',
+  backgroundAlt: '#F8F9FA',
+  text: '#2C3E50',
+  textSecondary: '#7F8C8D',
+  grey: '#BDC3C7',
+  card: '#FFFFFF',
+  border: '#E1E8ED',
+  warning: '#F39C12',
+  danger: '#E74C3C',
+  success: '#27AE60',
 };
 
 export const buttonStyles = StyleSheet.create({

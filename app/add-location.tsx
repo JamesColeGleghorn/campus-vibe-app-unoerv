@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
-import { View, Text, TextInput, ScrollView, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, ScrollView, Image, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
 import { router } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
 import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import Button from '../components/Button';
 import Icon from '../components/Icon';
@@ -20,6 +21,57 @@ export default function AddLocationScreen() {
   const [address, setAddress] = useState('');
   const [description, setDescription] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [imageUri, setImageUri] = useState<string | null>(null);
+
+  const handlePickImage = async () => {
+    console.log('Requesting image picker permission...');
+    
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (permissionResult.granted === false) {
+      Alert.alert('Permission Required', 'Permission to access camera roll is required!');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      console.log('Image selected:', result.assets[0].uri);
+      setImageUri(result.assets[0].uri);
+    }
+  };
+
+  const handleTakePhoto = async () => {
+    console.log('Requesting camera permission...');
+    
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+    
+    if (permissionResult.granted === false) {
+      Alert.alert('Permission Required', 'Permission to access camera is required!');
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      console.log('Photo taken:', result.assets[0].uri);
+      setImageUri(result.assets[0].uri);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    console.log('Removing image');
+    setImageUri(null);
+  };
 
   const handleSubmit = () => {
     if (!name.trim() || !address.trim() || !selectedCategory) {
@@ -32,6 +84,7 @@ export default function AddLocationScreen() {
       address: address.trim(),
       description: description.trim(),
       category: selectedCategory,
+      imageUri,
     });
 
     Alert.alert(
@@ -62,6 +115,29 @@ export default function AddLocationScreen() {
             <Text style={styles.subtitle}>
               Share a new place with the community and be the first to rate its vibe!
             </Text>
+
+            <View style={styles.section}>
+              <Text style={styles.label}>Photo</Text>
+              {imageUri ? (
+                <View style={styles.imagePreviewContainer}>
+                  <Image source={{ uri: imageUri }} style={styles.imagePreview} />
+                  <TouchableOpacity onPress={handleRemoveImage} style={styles.removeImageButton}>
+                    <Icon name="close-circle" size={24} color={colors.background} />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View style={styles.imagePickerContainer}>
+                  <TouchableOpacity onPress={handlePickImage} style={styles.imagePickerButton}>
+                    <Icon name="images" size={32} color={colors.primary} />
+                    <Text style={styles.imagePickerText}>Choose from Gallery</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleTakePhoto} style={styles.imagePickerButton}>
+                    <Icon name="camera" size={32} color={colors.primary} />
+                    <Text style={styles.imagePickerText}>Take Photo</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
 
             <View style={styles.section}>
               <Text style={styles.label}>Place Name *</Text>
@@ -187,6 +263,46 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.text,
     marginBottom: 8,
+  },
+  imagePickerContainer: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  imagePickerButton: {
+    flex: 1,
+    backgroundColor: colors.backgroundAlt,
+    borderWidth: 2,
+    borderColor: colors.border,
+    borderStyle: 'dashed',
+    borderRadius: 12,
+    padding: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  imagePickerText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.text,
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  imagePreviewContainer: {
+    position: 'relative',
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  imagePreview: {
+    width: '100%',
+    height: 200,
+    borderRadius: 12,
+  },
+  removeImageButton: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: colors.danger,
+    borderRadius: 20,
+    padding: 4,
   },
   input: {
     backgroundColor: colors.backgroundAlt,
