@@ -14,26 +14,21 @@ export default function LoginScreen() {
   const { login } = useAuth();
 
   const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      Alert.alert('Missing Information', 'Please enter both email and password.');
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
+    console.log('Attempting login with:', email);
     setLoading(true);
-    console.log('Attempting login...');
 
     try {
-      const success = await login(email.trim(), password);
-      
-      if (success) {
-        console.log('Login successful');
-        router.replace('/home');
-      } else {
-        Alert.alert('Login Failed', 'Invalid email or password. Please try again.');
-      }
+      await login(email, password);
+      console.log('Login successful, navigating to home');
+      router.replace('/(tabs)/home');
     } catch (error) {
       console.error('Login error:', error);
-      Alert.alert('Error', 'An error occurred during login. Please try again.');
+      Alert.alert('Error', 'Invalid credentials. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -47,52 +42,54 @@ export default function LoginScreen() {
   return (
     <SafeAreaView style={commonStyles.wrapper}>
       <KeyboardAvoidingView 
-        style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={commonStyles.container}
       >
         <View style={styles.content}>
           <View style={styles.header}>
             <View style={styles.iconContainer}>
-              <Icon name="location" size={48} color={colors.primary} />
+              <Icon name="sparkles" size={48} color={colors.primary} />
             </View>
-            <Text style={styles.title}>Welcome to VibeRater</Text>
+            <Text style={styles.title}>Welcome to VibeRater 2.0</Text>
             <Text style={styles.subtitle}>
-              Discover and rate the vibe of places around you
+              Discover and share the vibe of places around you
             </Text>
           </View>
 
           <View style={styles.form}>
             <View style={styles.inputContainer}>
-              <Icon name="mail" size={20} color={colors.textSecondary} style={styles.inputIcon} />
+              <Icon name="mail" size={20} color={colors.textSecondary} />
               <TextInput
                 style={styles.input}
-                value={email}
-                onChangeText={setEmail}
                 placeholder="Email"
                 placeholderTextColor={colors.textSecondary}
-                keyboardType="email-address"
+                value={email}
+                onChangeText={setEmail}
                 autoCapitalize="none"
-                autoCorrect={false}
+                keyboardType="email-address"
               />
             </View>
 
             <View style={styles.inputContainer}>
-              <Icon name="lock-closed" size={20} color={colors.textSecondary} style={styles.inputIcon} />
+              <Icon name="lock-closed" size={20} color={colors.textSecondary} />
               <TextInput
                 style={styles.input}
-                value={password}
-                onChangeText={setPassword}
                 placeholder="Password"
                 placeholderTextColor={colors.textSecondary}
+                value={password}
+                onChangeText={setPassword}
                 secureTextEntry
-                autoCapitalize="none"
               />
             </View>
 
+            <TouchableOpacity style={styles.forgotPassword}>
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity>
+
             <Button
-              text={loading ? "Logging in..." : "Log In"}
+              text={loading ? 'Logging in...' : 'Login'}
               onPress={handleLogin}
-              style={[buttonStyles.primary, styles.loginButton]}
+              style={buttonStyles.primary}
               disabled={loading}
             />
 
@@ -102,11 +99,17 @@ export default function LoginScreen() {
               <View style={styles.dividerLine} />
             </View>
 
-            <TouchableOpacity onPress={handleSignup} style={styles.signupLink}>
-              <Text style={styles.signupText}>
-                Don&apos;t have an account? <Text style={styles.signupTextBold}>Sign Up</Text>
-              </Text>
-            </TouchableOpacity>
+            <Button
+              text="Create Account"
+              onPress={handleSignup}
+              style={buttonStyles.secondary}
+            />
+          </View>
+
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>
+              By continuing, you agree to our Terms of Service and Privacy Policy
+            </Text>
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -115,9 +118,6 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   content: {
     flex: 1,
     paddingHorizontal: 24,
@@ -150,30 +150,33 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   form: {
-    width: '100%',
+    marginBottom: 32,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.backgroundAlt,
-    borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: 12,
     paddingHorizontal: 16,
+    paddingVertical: 14,
     marginBottom: 16,
-  },
-  inputIcon: {
-    marginRight: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   input: {
     flex: 1,
     fontSize: 16,
     color: colors.text,
-    paddingVertical: 14,
+    marginLeft: 12,
   },
-  loginButton: {
-    marginTop: 8,
-    paddingVertical: 16,
+  forgotPassword: {
+    alignSelf: 'flex-end',
+    marginBottom: 24,
+  },
+  forgotPasswordText: {
+    fontSize: 14,
+    color: colors.primary,
+    fontWeight: '500',
   },
   divider: {
     flexDirection: 'row',
@@ -186,19 +189,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.border,
   },
   dividerText: {
-    marginHorizontal: 16,
     fontSize: 14,
     color: colors.textSecondary,
+    marginHorizontal: 16,
   },
-  signupLink: {
+  footer: {
     alignItems: 'center',
   },
-  signupText: {
-    fontSize: 16,
+  footerText: {
+    fontSize: 12,
     color: colors.textSecondary,
-  },
-  signupTextBold: {
-    fontWeight: '600',
-    color: colors.primary,
+    textAlign: 'center',
+    lineHeight: 18,
   },
 });

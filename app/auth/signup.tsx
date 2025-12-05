@@ -16,36 +16,31 @@ export default function SignupScreen() {
   const { signup } = useAuth();
 
   const handleSignup = async () => {
-    if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
-      Alert.alert('Missing Information', 'Please fill in all fields.');
+    if (!name || !email || !password || !confirmPassword) {
+      Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Password Mismatch', 'Passwords do not match. Please try again.');
+      Alert.alert('Error', 'Passwords do not match');
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert('Weak Password', 'Password must be at least 6 characters long.');
+      Alert.alert('Error', 'Password must be at least 6 characters');
       return;
     }
 
+    console.log('Attempting signup with:', email);
     setLoading(true);
-    console.log('Attempting signup...');
 
     try {
-      const success = await signup(name.trim(), email.trim(), password);
-      
-      if (success) {
-        console.log('Signup successful');
-        router.replace('/home');
-      } else {
-        Alert.alert('Signup Failed', 'Unable to create account. Please try again.');
-      }
+      await signup(name, email, password);
+      console.log('Signup successful, navigating to home');
+      router.replace('/(tabs)/home');
     } catch (error) {
       console.error('Signup error:', error);
-      Alert.alert('Error', 'An error occurred during signup. Please try again.');
+      Alert.alert('Error', 'Failed to create account. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -59,8 +54,8 @@ export default function SignupScreen() {
   return (
     <SafeAreaView style={commonStyles.wrapper}>
       <KeyboardAvoidingView 
-        style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={commonStyles.container}
       >
         <ScrollView 
           contentContainerStyle={styles.scrollContent}
@@ -70,85 +65,84 @@ export default function SignupScreen() {
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
               <Icon name="arrow-back" size={24} color={colors.text} />
             </TouchableOpacity>
+            <View style={styles.iconContainer}>
+              <Icon name="person-add" size={48} color={colors.primary} />
+            </View>
+            <Text style={styles.title}>Create Account</Text>
+            <Text style={styles.subtitle}>
+              Join VibeRater 2.0 and start discovering amazing places
+            </Text>
           </View>
 
-          <View style={styles.content}>
-            <View style={styles.titleSection}>
-              <View style={styles.iconContainer}>
-                <Icon name="person-add" size={48} color={colors.primary} />
-              </View>
-              <Text style={styles.title}>Create Account</Text>
-              <Text style={styles.subtitle}>
-                Join the community and start rating vibes!
-              </Text>
+          <View style={styles.form}>
+            <View style={styles.inputContainer}>
+              <Icon name="person" size={20} color={colors.textSecondary} />
+              <TextInput
+                style={styles.input}
+                placeholder="Full Name"
+                placeholderTextColor={colors.textSecondary}
+                value={name}
+                onChangeText={setName}
+                autoCapitalize="words"
+              />
             </View>
 
-            <View style={styles.form}>
-              <View style={styles.inputContainer}>
-                <Icon name="person" size={20} color={colors.textSecondary} style={styles.inputIcon} />
-                <TextInput
-                  style={styles.input}
-                  value={name}
-                  onChangeText={setName}
-                  placeholder="Full Name"
-                  placeholderTextColor={colors.textSecondary}
-                  autoCapitalize="words"
-                />
-              </View>
-
-              <View style={styles.inputContainer}>
-                <Icon name="mail" size={20} color={colors.textSecondary} style={styles.inputIcon} />
-                <TextInput
-                  style={styles.input}
-                  value={email}
-                  onChangeText={setEmail}
-                  placeholder="Email"
-                  placeholderTextColor={colors.textSecondary}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-              </View>
-
-              <View style={styles.inputContainer}>
-                <Icon name="lock-closed" size={20} color={colors.textSecondary} style={styles.inputIcon} />
-                <TextInput
-                  style={styles.input}
-                  value={password}
-                  onChangeText={setPassword}
-                  placeholder="Password (min 6 characters)"
-                  placeholderTextColor={colors.textSecondary}
-                  secureTextEntry
-                  autoCapitalize="none"
-                />
-              </View>
-
-              <View style={styles.inputContainer}>
-                <Icon name="lock-closed" size={20} color={colors.textSecondary} style={styles.inputIcon} />
-                <TextInput
-                  style={styles.input}
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword}
-                  placeholder="Confirm Password"
-                  placeholderTextColor={colors.textSecondary}
-                  secureTextEntry
-                  autoCapitalize="none"
-                />
-              </View>
-
-              <Button
-                text={loading ? "Creating Account..." : "Sign Up"}
-                onPress={handleSignup}
-                style={[buttonStyles.primary, styles.signupButton]}
-                disabled={loading}
+            <View style={styles.inputContainer}>
+              <Icon name="mail" size={20} color={colors.textSecondary} />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                placeholderTextColor={colors.textSecondary}
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                keyboardType="email-address"
               />
+            </View>
 
-              <TouchableOpacity onPress={handleLogin} style={styles.loginLink}>
-                <Text style={styles.loginText}>
-                  Already have an account? <Text style={styles.loginTextBold}>Log In</Text>
-                </Text>
+            <View style={styles.inputContainer}>
+              <Icon name="lock-closed" size={20} color={colors.textSecondary} />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                placeholderTextColor={colors.textSecondary}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Icon name="lock-closed" size={20} color={colors.textSecondary} />
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm Password"
+                placeholderTextColor={colors.textSecondary}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry
+              />
+            </View>
+
+            <Button
+              text={loading ? 'Creating Account...' : 'Sign Up'}
+              onPress={handleSignup}
+              style={buttonStyles.primary}
+              disabled={loading}
+            />
+
+            <View style={styles.loginContainer}>
+              <Text style={styles.loginText}>Already have an account? </Text>
+              <TouchableOpacity onPress={handleLogin}>
+                <Text style={styles.loginLink}>Login</Text>
               </TouchableOpacity>
             </View>
+          </View>
+
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>
+              By creating an account, you agree to our Terms of Service and Privacy Policy
+            </Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -157,28 +151,19 @@ export default function SignupScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 24,
+    paddingVertical: 20,
   },
   header: {
-    paddingTop: 16,
-    marginBottom: 24,
-  },
-  backButton: {
-    padding: 8,
-    alignSelf: 'flex-start',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  titleSection: {
     alignItems: 'center',
     marginBottom: 40,
+  },
+  backButton: {
+    alignSelf: 'flex-start',
+    padding: 8,
+    marginBottom: 16,
   },
   iconContainer: {
     width: 80,
@@ -203,42 +188,46 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   form: {
-    width: '100%',
+    marginBottom: 32,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.backgroundAlt,
-    borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: 12,
     paddingHorizontal: 16,
+    paddingVertical: 14,
     marginBottom: 16,
-  },
-  inputIcon: {
-    marginRight: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   input: {
     flex: 1,
     fontSize: 16,
     color: colors.text,
-    paddingVertical: 14,
+    marginLeft: 12,
   },
-  signupButton: {
-    marginTop: 8,
-    paddingVertical: 16,
-  },
-  loginLink: {
-    alignItems: 'center',
+  loginContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginTop: 24,
-    marginBottom: 40,
   },
   loginText: {
-    fontSize: 16,
+    fontSize: 14,
     color: colors.textSecondary,
   },
-  loginTextBold: {
-    fontWeight: '600',
+  loginLink: {
+    fontSize: 14,
     color: colors.primary,
+    fontWeight: '600',
+  },
+  footer: {
+    alignItems: 'center',
+  },
+  footerText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 18,
   },
 });

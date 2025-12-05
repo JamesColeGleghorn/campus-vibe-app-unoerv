@@ -9,6 +9,11 @@ export interface Location {
   totalRatings: number;
   imageUrl?: string;
   distance?: number; // in miles
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+  };
+  geofenceRadius?: number; // in meters
 }
 
 export interface Rating {
@@ -27,4 +32,13 @@ export interface User {
   id: string;
   name: string;
   avatar?: string;
+}
+
+export interface GeofenceRegion {
+  id: string;
+  locationId: string;
+  latitude: number;
+  longitude: number;
+  radius: number;
+  averageVibe: number;
 }

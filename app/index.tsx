@@ -1,28 +1,33 @@
 
 import { useEffect } from 'react';
-import { Redirect } from 'expo-router';
-import { useAuth } from '../contexts/AuthContext';
 import { View, ActivityIndicator } from 'react-native';
-import { colors } from '../styles/commonStyles';
+import { router } from 'expo-router';
+import { useAuth } from '../contexts/AuthContext';
+import { commonStyles, colors } from '../styles/commonStyles';
 
 export default function Index() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
 
-  console.log('Index - Auth state:', isAuthenticated, user?.name);
+  useEffect(() => {
+    console.log('Index screen - checking auth status:', isAuthenticated);
+    
+    // Small delay to ensure auth state is loaded
+    const timer = setTimeout(() => {
+      if (isAuthenticated) {
+        console.log('User authenticated, redirecting to tabs');
+        router.replace('/(tabs)/home');
+      } else {
+        console.log('User not authenticated, redirecting to login');
+        router.replace('/auth/login');
+      }
+    }, 500);
 
-  // Show loading while checking auth state
-  if (user === undefined) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
-  }
+    return () => clearTimeout(timer);
+  }, [isAuthenticated]);
 
-  // Redirect based on auth state
-  if (isAuthenticated) {
-    return <Redirect href="/home" />;
-  }
-
-  return <Redirect href="/auth/login" />;
+  return (
+    <View style={[commonStyles.wrapper, commonStyles.center]}>
+      <ActivityIndicator size="large" color={colors.primary} />
+    </View>
+  );
 }

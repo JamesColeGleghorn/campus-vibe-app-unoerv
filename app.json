@@ -1,8 +1,7 @@
-
 {
   "expo": {
-    "name": "VibeRater",
-    "slug": "viberater",
+    "name": "Campus Vibe",
+    "slug": "Campus Vibe",
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/natively-dark.png",
@@ -58,5 +57,6 @@
     "extra": {
       "router": {}
     }
-  }
+  },
+  "scheme": "Campus Vibe"
 }

@@ -1,5 +1,6 @@
 
 import { Location, Rating } from '../types/Location';
+import { Friend, FriendRequest } from '../types/User';
 
 export const mockLocations: Location[] = [
   {
@@ -12,6 +13,8 @@ export const mockLocations: Location[] = [
     totalRatings: 156,
     imageUrl: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400',
     distance: 0.2,
+    coordinates: { latitude: 37.7749, longitude: -122.4194 },
+    geofenceRadius: 100,
   },
   {
     id: '2',
@@ -23,6 +26,8 @@ export const mockLocations: Location[] = [
     totalRatings: 89,
     imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400',
     distance: 0.3,
+    coordinates: { latitude: 37.7739, longitude: -122.4184 },
+    geofenceRadius: 150,
   },
   {
     id: '3',
@@ -34,6 +39,8 @@ export const mockLocations: Location[] = [
     totalRatings: 203,
     imageUrl: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400',
     distance: 0.5,
+    coordinates: { latitude: 37.7759, longitude: -122.4204 },
+    geofenceRadius: 200,
   },
   {
     id: '4',
@@ -45,6 +52,8 @@ export const mockLocations: Location[] = [
     totalRatings: 124,
     imageUrl: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400',
     distance: 0.4,
+    coordinates: { latitude: 37.7729, longitude: -122.4174 },
+    geofenceRadius: 80,
   },
   {
     id: '5',
@@ -56,6 +65,8 @@ export const mockLocations: Location[] = [
     totalRatings: 67,
     imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
     distance: 0.1,
+    coordinates: { latitude: 37.7769, longitude: -122.4214 },
+    geofenceRadius: 120,
   },
   {
     id: '6',
@@ -67,6 +78,8 @@ export const mockLocations: Location[] = [
     totalRatings: 98,
     imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400',
     distance: 0.6,
+    coordinates: { latitude: 37.7719, longitude: -122.4164 },
+    geofenceRadius: 90,
   },
 ];
 
@@ -114,5 +127,74 @@ export const mockRatings: Rating[] = [
     comment: 'Beautiful and peaceful. Perfect for outdoor study sessions.',
     createdAt: new Date('2024-01-08'),
     tags: ['peaceful', 'beautiful', 'outdoor'],
+  },
+];
+
+export const mockFriends: Friend[] = [
+  {
+    id: 'friend1',
+    name: 'Alex Johnson',
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
+    personalVibe: 'Coffee enthusiast and study buddy',
+    vibePreferences: ['quiet', 'cozy', 'friendly', 'good-wifi'],
+    recentActivity: [
+      {
+        locationId: '1',
+        locationName: 'Campus Café',
+        vibeRating: 5,
+        timestamp: new Date('2024-01-15T10:30:00'),
+      },
+    ],
+  },
+  {
+    id: 'friend2',
+    name: 'Sarah Chen',
+    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200',
+    personalVibe: 'Fitness lover and outdoor explorer',
+    vibePreferences: ['energetic', 'clean', 'modern', 'outdoor'],
+    recentActivity: [
+      {
+        locationId: '2',
+        locationName: 'Student Fitness Center',
+        vibeRating: 5,
+        timestamp: new Date('2024-01-14T07:00:00'),
+      },
+    ],
+  },
+  {
+    id: 'friend3',
+    name: 'Mike Rodriguez',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
+    personalVibe: 'Foodie and night owl',
+    vibePreferences: ['lively', 'tasty', 'social', 'late-night'],
+    recentActivity: [
+      {
+        locationId: '4',
+        locationName: 'Pizza Palace',
+        vibeRating: 4,
+        timestamp: new Date('2024-01-13T22:00:00'),
+      },
+    ],
+  },
+];
+
+export const mockFriendRequests: FriendRequest[] = [
+  {
+    id: 'req1',
+    fromUserId: 'user5',
+    fromUserName: 'Emma Wilson',
+    fromUserAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200',
+    toUserId: 'currentUser',
+    status: 'pending',
+    createdAt: new Date('2024-01-14'),
+  },
+  {
+    id: 'req2',
+    fromUserId: 'user6',
+    fromUserName: 'James Lee',
+    fromUserAvatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200',
+    toUserId: 'currentUser',
+    status: 'pending',
+    createdAt: new Date('2024-01-13'),
   },
 ];

@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, SafeAreaView, TouchableOpacity, Alert, TextInput } from 'react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
-import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
-import { useAuth } from '../contexts/AuthContext';
-import Button from '../components/Button';
-import Icon from '../components/Icon';
+import { commonStyles, colors, buttonStyles } from '../../styles/commonStyles';
+import { useAuth } from '../../contexts/AuthContext';
+import Button from '../../components/Button';
+import Icon from '../../components/Icon';
 
 const VIBE_TAGS = [
   'quiet', 'cozy', 'friendly', 'energetic', 'clean', 'modern',
@@ -118,9 +118,6 @@ export default function ProfileScreen() {
     <SafeAreaView style={commonStyles.wrapper}>
       <View style={commonStyles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Icon name="arrow-back" size={24} color={colors.text} />
-          </TouchableOpacity>
           <Text style={styles.headerTitle}>Profile</Text>
           <TouchableOpacity onPress={handleEditProfile} style={styles.editButton}>
             <Icon name={isEditing ? "checkmark" : "create"} size={24} color={colors.primary} />
@@ -293,9 +290,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
-  },
-  backButton: {
-    padding: 8,
   },
   headerTitle: {
     fontSize: 18,

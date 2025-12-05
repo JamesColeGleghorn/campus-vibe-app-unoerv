@@ -10,7 +10,7 @@ import { AuthProvider } from '../contexts/AuthContext';
 
 export default function RootLayout() {
   useEffect(() => {
-    console.log('App started');
+    console.log('VibeRater 2.0 started');
     setupErrorLogging();
   }, []);
 
@@ -28,8 +28,7 @@ export default function RootLayout() {
             <Stack.Screen name="index" />
             <Stack.Screen name="auth/login" />
             <Stack.Screen name="auth/signup" />
-            <Stack.Screen name="home" />
-            <Stack.Screen name="profile" />
+            <Stack.Screen name="(tabs)" />
             <Stack.Screen name="location/[id]" />
             <Stack.Screen name="add-location" />
             <Stack.Screen name="add-review/[id]" />
